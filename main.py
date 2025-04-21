@@ -1,3 +1,4 @@
+import random
 from alpha_beta import minimax
 from rules import getAllCaptureMoves, getCaptureMovesForPiece, isValidMove, endGameCheck
 from rules import empty_black, player1, player2, black_king, white_king
@@ -249,12 +250,24 @@ def main():
     totalwhite = 0
     turn = 0  # 0 for black, 1 for white
 
+    ai_turn = None
+
+    #randomize turns
+    if alphaflag:
+        ai_turn = random.choice([0, 1])
+
+    if ai_turn == 1:
+        print("Alpha will play White.")
+    else:
+        print("Alpha will play Black.")
+    print()
+
     while True:
         printBoard(board, totalblack, totalwhite, turn)
         if endGameCheck(board):
             break
 
-        if alphaflag and turn == 1: #get the alpha beta turn
+        if alphaflag and turn == ai_turn: #get the alpha beta turn
             move = getAlphaMove(board, turn)
         else:
             move = getHumanMove(board, turn)
