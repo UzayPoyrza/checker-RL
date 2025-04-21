@@ -1,6 +1,6 @@
 import copy
-from main import getAllCaptureMoves, getCaptureMovesForPiece, isValidMove
-from main import empty_black, player1, player2, black_king, white_king
+from rules import getAllCaptureMoves, getCaptureMovesForPiece, isValidMove, endGameCheck
+from rules import empty_black, player1, player2, black_king, white_king
 
 
 #This function calculates the current score. It is based on how many piece belongs to white and black
@@ -45,10 +45,61 @@ def getAllMoves(board, turn):
                             moves.append((r, c, nr, nc, None))
     return moves
 
+#create a deep copy. apply a move, return
+
 def simulateMove(board, move, turn):
-    # Simulate the move on a copy of the board.
-    pass
+    #Make a deep copy"
+    new_board = copy.deepcopy(board)
+    #get the move
+    sr, sc, dr, dc, cap = move
+    piece = new_board[sr][sc]
+    new_board[dr][dc] = piece
+    new_board[sr][sc] = empty_black
+    #if there is a valid capture move (if thre isnt then it is none)
+    if cap:
+        cr, cc = cap
+        new_board[cr][cc] = empty_black
+    #promotion
+    if turn == 0 and dr == 7 and new_board[dr][dc] == player1:
+        new_board[dr][dc] = black_king
+    if turn == 1 and dr == 0 and new_board[dr][dc] == player2:
+        new_board[dr][dc] = white_king
+    return new_board
+
+
 
 def minimax(board, depth, alpha, beta, turn, maximizingPlayer):
-    # Alpha-beta pruning minimax implementation.
-    pass
+    #Alpha-beta pruning minimax implementation.
+
+    if depth == 0 or endGameCheck(board):
+        #return evaluation and move as none
+        return evaluateBoard(board), None
+    moves = getAllMoves(board,turn)
+    if not moves:
+        return evaluateBoard(board)
+
+    #find best move
+
+    best_move = None
+    if maximizingPlayer:
+        max_eval = -float('inf')
+        for m in moves:
+            nb = simulateMove(board, m, turn)
+            val, _ = minimax(nb, depth - 1, alpha, beta, 1 - turn, False)
+            if val > max_eval:
+                max_eval, best_move = val, m
+            alpha = max(alpha, val)
+            if beta <= alpha:
+                break
+        return max_eval, best_move
+    else:
+        min_eval = float('inf')
+        for m in moves:
+            nb = simulateMove(board, m, turn)
+            val, _ = minimax(nb, depth - 1, alpha, beta, 1 - turn, True)
+            if val < min_eval:
+                min_eval, best_move = val, m
+            beta = min(beta, val)
+            if beta <= alpha:
+                break
+        return min_eval, best_move
