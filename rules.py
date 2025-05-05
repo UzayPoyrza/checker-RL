@@ -9,28 +9,19 @@ black_king = "♔" #black king
 #checks if there are any white or black pieces left on the board
 def endGameCheck(board):
 
-    #get total black pieces and white pieces
-    black_count = 0
-    for row in board:
-        black_count += row.count(player1)
-        black_count += row.count(black_king)
+    from rules import player1, player2, black_king, white_king  # or use module‐level names
 
+    black_count = 0
     white_count = 0
     for row in board:
-        white_count += row.count(player2)
-        white_count += row.count(white_king)
+        for cell in row:
+            if cell == player1 or cell == black_king:
+                black_count += 1
+            if cell == player2 or cell == white_king:
+                white_count += 1
 
-    #check
-    if black_count == 0:
-        endGame(True)
-        return True
-
-    if white_count == 0:
-        endGame(False)
-        return True
-
-    return False
-
+    # terminal if one side is wiped out
+    return (black_count == 0) or (white_count == 0)
 
 
 def isValidMove(board, turn, src_row, src_col, dest_row, dest_col):
@@ -161,3 +152,22 @@ def getCaptureMovesForPiece(board, turn, src_row, src_col):
             if board[new_r][new_c] == empty_black and board[mid_r][mid_c] in opponent_pieces:
                 moves.append((src_row, src_col, new_r, new_c, (mid_r, mid_c)))
     return moves
+
+def makeBoard():
+    board = [[" " for _ in range(8)] for _ in range(8)]
+    # place black pieces top three rows
+    for i in range(3):
+        for j in range(8):
+            if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
+                board[i][j] = player1
+    # two middle rows empty
+    for i in range(3, 5):
+        for j in range(8):
+            if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
+                board[i][j] = empty_black
+    # white pieces on buttom 3 rows
+    for i in range(5, 8):
+        for j in range(8):
+            if (i % 2 == 0 and j % 2 == 1) or (i % 2 == 1 and j % 2 == 0):
+                board[i][j] = player2
+    return board

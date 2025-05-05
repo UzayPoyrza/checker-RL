@@ -1,6 +1,5 @@
 import copy
-from rules import getAllCaptureMoves, getCaptureMovesForPiece, isValidMove, endGameCheck
-from rules import empty_black, player1, player2, black_king, white_king
+from rules import getAllCaptureMoves, getCaptureMovesForPiece, isValidMove, endGameCheck, empty_black, player1, player2, black_king, white_king
 
 
 #This function calculates the current score. It is based on how many piece belongs to white and black
