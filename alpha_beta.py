@@ -73,9 +73,10 @@ def minimax(board, depth, alpha, beta, turn, maximizingPlayer):
     if depth == 0 or endGameCheck(board):
         #return evaluation and move as none
         return evaluateBoard(board), None
+
     moves = getAllMoves(board,turn)
     if not moves:
-        return evaluateBoard(board)
+        return evaluateBoard(board), None
 
     #find best move
 
